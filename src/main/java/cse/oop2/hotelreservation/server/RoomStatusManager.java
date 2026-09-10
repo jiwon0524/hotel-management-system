@@ -1,0 +1,13 @@
+package cse.oop2.hotelreservation.server;
+
+import java.io.*; import java.nio.charset.StandardCharsets; import java.nio.file.*; import java.time.LocalDateTime; import java.time.format.DateTimeFormatter; import java.util.*;
+public class RoomStatusManager {
+    private static final Path FILE_PATH=Paths.get("room_status.txt"),LOG_PATH=Paths.get("price_logs.txt"); private static Map<String,String[]> roomData=new HashMap<>();
+    public static final String STATE_AVAILABLE="AVAILABLE",STATE_CLEANING="CLEANING",STATE_CONSTRUCTION="CONSTRUCTION";
+    public static void loadStatuses(){roomData.clear();if(!Files.exists(FILE_PATH))return;try(BufferedReader reader=Files.newBufferedReader(FILE_PATH,StandardCharsets.UTF_8)){String line;while((line=reader.readLine())!=null){String[] p=line.split(",");if(p.length>=4)roomData.put(p[0].trim(),new String[]{p[1].trim(),p[2].trim(),p[3].trim()});else if(p.length==2)roomData.put(p[0].trim(),new String[]{p[1].trim(),"0","-"});}}catch(IOException e){e.printStackTrace();}}
+    public static void saveStatus(String roomId,String status,String newPrice,String note){if(newPrice==null||newPrice.trim().isEmpty())newPrice=getDefaultPrice(roomId);if(note==null||note.trim().isEmpty())note="-";String oldPrice=getPrice(roomId);if(!oldPrice.equals(newPrice))logPriceChange(roomId,oldPrice,newPrice,note);roomData.put(roomId,new String[]{status,newPrice,note});saveToFile();}
+    private static void logPriceChange(String roomId,String oldPrice,String newPrice,String reason){try(BufferedWriter writer=Files.newBufferedWriter(LOG_PATH,StandardCharsets.UTF_8,StandardOpenOption.CREATE,StandardOpenOption.APPEND)){String timestamp=LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));writer.write(timestamp+","+roomId+","+oldPrice+","+newPrice+","+reason);writer.newLine();}catch(IOException e){e.printStackTrace();}}
+    private static void saveToFile(){try(BufferedWriter writer=Files.newBufferedWriter(FILE_PATH,StandardCharsets.UTF_8)){for(Map.Entry<String,String[]> e:roomData.entrySet()){String[] v=e.getValue();writer.write(e.getKey()+","+v[0]+","+v[1]+","+v[2]);writer.newLine();}}catch(IOException e){e.printStackTrace();}}
+    public static String getStatus(String roomId){return roomData.containsKey(roomId)?roomData.get(roomId)[0]:STATE_AVAILABLE;} public static String getPrice(String roomId){return roomData.containsKey(roomId)?roomData.get(roomId)[1]:getDefaultPrice(roomId);} public static String getNote(String roomId){return roomData.containsKey(roomId)?roomData.get(roomId)[2]:"-";}
+    private static String getDefaultPrice(String roomId){char floor=roomId.charAt(0);if(floor=='5')return "250000";if(floor=='3'||floor=='4')return "150000";return "100000";}
+}
