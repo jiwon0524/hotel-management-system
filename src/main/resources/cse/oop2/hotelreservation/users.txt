@@ -1,0 +1,2 @@
+관리자,admin,change-me
+테스트사용자,test@example.com,1234
