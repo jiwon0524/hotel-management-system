@@ -1,0 +1,18 @@
+target/
+*.class
+*.jar
+.idea/
+.vscode/
+nbproject/private/
+.DS_Store
+
+# Runtime data that may contain user/account information
+users.txt
+reservations.txt
+reservations_temp.txt
+chat*.txt
+inquiries.txt
+food_orders.txt
+stay_status.txt
+room_status.txt
+price_logs.txt
