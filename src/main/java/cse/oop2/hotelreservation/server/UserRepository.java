@@ -1,0 +1,1 @@
+package cse.oop2.hotelreservation.server; public interface UserRepository { String findPasswordByEmail(String email); boolean existsByEmail(String email); boolean saveUser(String name,String email,String password); }

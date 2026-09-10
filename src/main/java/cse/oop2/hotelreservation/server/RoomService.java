@@ -1,0 +1,1 @@
+package cse.oop2.hotelreservation.server; import cse.oop2.hotelreservation.common.Room; import java.util.List; public class RoomService { private final RoomRepository roomRepository; public RoomService(RoomRepository r){roomRepository=r;} public List<Room> getAllRooms(){return roomRepository.findAllRooms();} }
